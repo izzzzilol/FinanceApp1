@@ -22,10 +22,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.financeapp.R
 
+private const val INITIAL_BALANCE = 25_000
+private const val TEST_TRANSACTION_AMOUNT = 100
+
 @Composable
 @Suppress("FunctionNaming")
 private fun FinanceAppScreen() {
-    val balance = 25_000
+    val balance = INITIAL_BALANCE
     val transactionCount = 0
     var state by remember { mutableStateOf(MainUiState()) }
 
@@ -54,7 +57,8 @@ private fun FinanceAppScreen() {
             )
             Button(onClick = {
                 val transaction = Transaction(
-                    TransactionType.DEPOSIT, 100
+                    TransactionType.DEPOSIT,
+                    TEST_TRANSACTION_AMOUNT,
                 )
                 state = reduce(state, MainUiEvent.AddTransaction(transaction))
             }) {
@@ -62,7 +66,8 @@ private fun FinanceAppScreen() {
             }
             Button(onClick = {
                 val transaction = Transaction(
-                    TransactionType.WITHDRAW, 100
+                    TransactionType.WITHDRAW,
+                    TEST_TRANSACTION_AMOUNT,
                 )
                 state = reduce(state, MainUiEvent.AddTransaction(transaction))
             }) {

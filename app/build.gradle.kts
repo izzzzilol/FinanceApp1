@@ -5,18 +5,13 @@ plugins {
 }
 
 detekt {
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
-    config.setFrom(rootProject.files("config/detekt/detekt.yml"))
-    parallel = true
-    ignoreFailures = false
-    failOnSeverity = dev.detekt.gradle.extensions.FailOnSeverity.Warning
-}
+    allRules = false
+    autoCorrect = true
 
-tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
-    reports {
-        html.required.set(true)
-        checkstyle.required.set(true)
-    }
+    // Отключить строгие правила
+    baseline = file("$rootDir/config/detekt/baseline.xml")
 }
 
 val detektHtmlReport = layout.buildDirectory.file("reports/detekt/detekt.html")

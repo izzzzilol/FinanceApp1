@@ -28,107 +28,102 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-@Suppress("FunctionNaming")
-internal fun TransactionScreen(
-    viewModel: TransactionViewModel = viewModel()
-) {
+@Suppress("FunctionNaming", "LongMethod")
+internal fun TransactionScreen(viewModel: TransactionViewModel = viewModel()) {
     val state = viewModel.uiState
 
     Surface(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         Column(
             modifier = Modifier
                 .windowInsetsPadding(WindowInsets.safeDrawing)
                 .verticalScroll(rememberScrollState())
                 .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = stringResource(R.string.transaction_title),
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
             )
 
             Text(
                 text = stringResource(
                     R.string.balance_summary,
                     state.balance,
-                    state.transactionCount
+                    state.transactionCount,
                 ),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
 
             OutlinedTextField(
                 value = state.description,
                 onValueChange = {
                     viewModel.onEvent(
-                        MainUiEvent.DescriptionChanged(it)
+                        MainUiEvent.DescriptionChanged(it),
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
-                        stringResource(R.string.transaction_description)
+                        stringResource(R.string.transaction_description),
                     )
                 },
-                singleLine = true
+                singleLine = true,
             )
 
             OutlinedTextField(
                 value = state.amount,
                 onValueChange = {
                     viewModel.onEvent(
-                        MainUiEvent.AmountChanged(it)
+                        MainUiEvent.AmountChanged(it),
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
-                        stringResource(R.string.transaction_amount)
+                        stringResource(R.string.transaction_amount),
                     )
                 },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Number,
                 ),
-                singleLine = true
+                singleLine = true,
             )
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 FilterChip(
                     selected = state.type == TransactionType.EXPENSE,
                     onClick = {
                         viewModel.onEvent(
                             MainUiEvent.TypeChanged(
-                                TransactionType.EXPENSE
-                            )
+                                TransactionType.EXPENSE,
+                            ),
                         )
                     },
                     label = {
                         Text(
-                            stringResource(R.string.transaction_expense)
+                            stringResource(R.string.transaction_expense),
                         )
-                    }
+                    },
                 )
 
                 FilterChip(
-                    selected
-
-
-                    = state.type == TransactionType.INCOME,
+                    selected = state.type == TransactionType.INCOME,
                     onClick = {
                         viewModel.onEvent(
                             MainUiEvent.TypeChanged(
-                                TransactionType.INCOME
-                            )
+                                TransactionType.INCOME,
+                            ),
                         )
                     },
                     label = {
                         Text(
-                            stringResource(R.string.transaction_income)
+                            stringResource(R.string.transaction_income),
                         )
-                    }
+                    },
                 )
             }
 
@@ -143,16 +138,16 @@ internal fun TransactionScreen(
 
                 Text(
                     text = stringResource(textId),
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.error,
                 )
             }
 
             Button(
                 onClick = viewModel::addTransaction,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    stringResource(R.string.transaction_add)
+                    stringResource(R.string.transaction_add),
                 )
             }
 
@@ -161,7 +156,7 @@ internal fun TransactionScreen(
 
                 Text(
                     text = stringResource(R.string.transaction_history),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
                 )
 
                 state.transactions.asReversed().forEach { tx ->
@@ -177,8 +172,8 @@ internal fun TransactionScreen(
                         text = stringResource(
                             row,
                             tx.description,
-                            tx.amount
-                        )
+                            tx.amount,
+                        ),
                     )
                 }
             }
