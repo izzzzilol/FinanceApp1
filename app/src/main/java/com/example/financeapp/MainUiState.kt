@@ -16,7 +16,7 @@ data class Transaction(
     val description: String,
 )
 
-data class MainUiState(
+internal data class MainUiState(
     val amount: String = "",
     val description: String = "",
     val type: TransactionType = TransactionType.EXPENSE,

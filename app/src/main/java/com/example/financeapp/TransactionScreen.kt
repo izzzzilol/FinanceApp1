@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-@Suppress("FunctionNaming", "LongMethod")
+@Suppress("FunctionNaming")
 internal fun TransactionScreen(viewModel: TransactionViewModel = viewModel()) {
     val state = viewModel.uiState
 
