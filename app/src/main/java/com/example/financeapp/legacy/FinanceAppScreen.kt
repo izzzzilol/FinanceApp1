@@ -1,5 +1,8 @@
 package com.example.financeapp.legacy
 
+import com.example.financeapp.FinanceAppTheme
+import com.example.financeapp.R
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -19,17 +22,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.financeapp.R
 
-private const val INITIAL_BALANCE = 25_000
-private const val TEST_TRANSACTION_AMOUNT = 100
+private const val DEMO_INCOME_AMOUNT = 500
+private const val DEMO_EXPENSE_AMOUNT = 250
 
 @Composable
 @Suppress("FunctionNaming")
-private fun FinanceAppScreen() {
-    val balance = INITIAL_BALANCE
-    val transactionCount = 0
+internal fun FinanceAppScreen() {
     var state by remember { mutableStateOf(MainUiState()) }
 
     Surface(
@@ -51,28 +52,41 @@ private fun FinanceAppScreen() {
                 text = stringResource(
                     R.string.balance_summary,
                     state.balance,
-                    state.counter,
+                    state.transactionCount,
                 ),
                 style = MaterialTheme.typography.headlineSmall,
             )
-            Button(onClick = {
-                val transaction = Transaction(
-                    TransactionType.DEPOSIT,
-                    TEST_TRANSACTION_AMOUNT,
-                )
-                state = reduce(state, MainUiEvent.AddTransaction(transaction))
-            }) {
+            Button(
+                onClick = {
+                    val transaction = Transaction(
+                        amount = DEMO_INCOME_AMOUNT,
+                        type = TransactionType.INCOME,
+                    )
+                    state = reduce(state, MainUiEvent.AddTransaction(transaction))
+                },
+            ) {
                 Text(text = stringResource(R.string.add_income_button))
             }
-            Button(onClick = {
-                val transaction = Transaction(
-                    TransactionType.WITHDRAW,
-                    TEST_TRANSACTION_AMOUNT,
-                )
-                state = reduce(state, MainUiEvent.AddTransaction(transaction))
-            }) {
+            Button(
+                onClick = {
+                    val transaction = Transaction(
+                        amount = DEMO_EXPENSE_AMOUNT,
+                        type = TransactionType.EXPENSE,
+                    )
+                    state = reduce(state, MainUiEvent.AddTransaction(transaction))
+                },
+            ) {
                 Text(text = stringResource(R.string.add_expense_button))
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+@Suppress("FunctionNaming", "UnusedPrivateFunction")
+private fun FinanceAppScreenPreview() {
+    FinanceAppTheme {
+        FinanceAppScreen()
     }
 }

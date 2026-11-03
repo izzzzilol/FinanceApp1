@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 internal class TransactionViewModel : ViewModel() {
-
     var uiState by mutableStateOf(MainUiState())
         private set
 
@@ -14,97 +13,57 @@ internal class TransactionViewModel : ViewModel() {
         uiState = reduce(uiState, event)
     }
 
+    fun addTransaction() {
+        val description = uiState.description.trim()
+        val amount = uiState.amount.toIntOrNull()
+        val event = when {
+            uiState.amount.isEmpty() || description.isEmpty() -> MainUiEvent.InvalidTransaction
+
+            amount == null -> MainUiEvent.AmountTooLarge
+
+            amount <= 0 -> MainUiEvent.InvalidTransaction
+
+            else -> MainUiEvent.AddTransaction(
+                Transaction(amount = amount, type = uiState.type, description = description),
+            )
+        }
+        onEvent(event)
+    }
+
     private fun reduce(state: MainUiState, event: MainUiEvent): MainUiState = when (event) {
         is MainUiEvent.AmountChanged -> {
-            if (event.value.all { it.isDigit() }) {
-                state.copy(
-                    amount = event.value,
-                    error = null,
-                )
-            } else {
-                state
-            }
+            if (event.value.all(Char::isDigit)) state.copy(amount = event.value, error = null) else state
         }
 
-        is MainUiEvent.DescriptionChanged -> {
-            state.copy(
-                description = event.value,
-                error = null,
-            )
-        }
+        is MainUiEvent.DescriptionChanged -> state.copy(description = event.value, error = null)
 
-        is MainUiEvent.TypeChanged -> {
-            state.copy(
-                type = event.type,
-                error = null,
-            )
-        }
+        is MainUiEvent.TypeChanged -> state.copy(type = event.type, error = null)
 
-        MainUiEvent.InvalidTransaction -> {
-            state.copy(
-                error = TransactionError.INVALID_INPUT,
-            )
-        }
+        MainUiEvent.InvalidTransaction -> state.copy(error = TransactionError.INVALID_INPUT)
 
-        MainUiEvent.AmountTooLarge -> {
-            state.copy(
-                error = TransactionError.AMOUNT_TOO_LARGE,
-            )
-        }
+        MainUiEvent.AmountTooLarge -> state.copy(error = TransactionError.AMOUNT_TOO_LARGE)
 
         is MainUiEvent.AddTransaction -> {
-            val tx = event.transaction
+            val transaction = event.transaction
+            require(transaction.amount > 0) { "Transaction amount must be positive" }
+            require(transaction.description.isNotBlank()) { "Transaction description must not be blank" }
 
-            if (tx.amount <= 0 || tx.description.isBlank()) {
-                state.copy(
-                    error = TransactionError.INVALID_INPUT,
-                )
+            val balanceChange = when (transaction.type) {
+                TransactionType.INCOME -> transaction.amount
+                TransactionType.EXPENSE -> -transaction.amount
+            }
+            val newBalance = state.balance.toLong() + balanceChange
+            if (newBalance !in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) {
+                state.copy(error = TransactionError.AMOUNT_TOO_LARGE)
             } else {
-                val change = if (tx.type == TransactionType.INCOME) {
-                    tx.amount.toLong()
-                } else {
-                    -tx.amount.toLong()
-                }
-
-                val next = state.balance + change
-
                 state.copy(
                     amount = "",
                     description = "",
-                    balance = next.toInt(),
+                    balance = newBalance.toInt(),
                     transactionCount = state.transactionCount + 1,
-                    transactions = state.transactions + tx,
+                    transactions = state.transactions + transaction,
                     error = null,
                 )
-            }
-        }
-    }
-
-    fun addTransaction() {
-        val description = uiState.description.trim()
-
-        if (uiState.amount.isEmpty() || description.isEmpty()) {
-            onEvent(MainUiEvent.InvalidTransaction)
-            return
-        }
-
-        when (val amount = uiState.amount.toIntOrNull()) {
-            null -> onEvent(MainUiEvent.AmountTooLarge)
-
-            else -> {
-                if (amount <= 0) {
-                    onEvent(MainUiEvent.InvalidTransaction)
-                } else {
-                    onEvent(
-                        MainUiEvent.AddTransaction(
-                            Transaction(
-                                amount = amount,
-                                type = uiState.type,
-                                description = description,
-                            ),
-                        ),
-                    )
-                }
             }
         }
     }
