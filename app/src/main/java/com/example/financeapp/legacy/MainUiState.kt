@@ -1,39 +1,37 @@
 package com.example.financeapp.legacy
 
-private const val INITIAL_BALANCE = 25_000
-
 internal data class MainUiState(
-    val balance: Int = INITIAL_BALANCE,
-    val transactionCount: Int = 0,
+    // Какое начальное значение у баланса?
+    // Как посчитать выполненные операции?
+    val balance: Int = 0,
+    val counter: Int = 0,
 )
 
 internal enum class TransactionType {
-    INCOME,
-    EXPENSE,
+    // Какие два типа нужны кнопкам?
+    DEPOSIT,
+    WITHDRAW,
 }
 
 internal data class Transaction(
+    // Какие два свойства полностью описывают операцию?
+    val transactionType: TransactionType,
     val amount: Int,
-    val type: TransactionType,
 )
 
 internal sealed interface MainUiEvent {
-    data class AddTransaction(val transaction: Transaction) : MainUiEvent
+    // Одно событие должно переносить созданную транзакцию
+    data class AddTransaction(
+        val transaction: Transaction,
+    ) : MainUiEvent
 }
 
 internal fun reduce(state: MainUiState, event: MainUiEvent): MainUiState = when (event) {
     is MainUiEvent.AddTransaction -> {
-        val transaction = event.transaction
-        require(transaction.amount > 0) { "Transaction amount must be positive" }
-
-        val balanceChange = when (transaction.type) {
-            TransactionType.INCOME -> transaction.amount
-            TransactionType.EXPENSE -> -transaction.amount
+        val balanceChanged = when (event.transaction.transactionType) {
+            TransactionType.DEPOSIT -> state.balance + event.transaction.amount
+            TransactionType.WITHDRAW -> state.balance - event.transaction.amount
         }
-
-        state.copy(
-            balance = state.balance + balanceChange,
-            transactionCount = state.transactionCount + 1,
-        )
+        state.copy(counter = state.counter + 1, balance = balanceChanged)
     }
 }
