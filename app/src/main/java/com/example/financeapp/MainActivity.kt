@@ -1,16 +1,11 @@
 package com.example.financeapp
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -18,13 +13,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.financeapp.legacy.MainUiEvent
+import com.example.financeapp.legacy.MainUiState
+import com.example.financeapp.legacy.Transaction
+import com.example.financeapp.legacy.TransactionType
+import com.example.financeapp.legacy.reduce
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +36,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FinanceAppTheme {
-                FinanceAppScreen()
+                TransactionScreen()
             }
         }
     }
@@ -40,14 +44,19 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 @Suppress("FunctionNaming")
-private fun FinanceAppTheme(content: @Composable () -> Unit) {
+internal fun FinanceAppTheme(content: @Composable () -> Unit) {
     MaterialTheme(content = content)
 }
+
+private const val INITIAL_BALANCE = 25_000
+private const val TEST_TRANSACTION_AMOUNT = 100
 
 @Composable
 @Suppress("FunctionNaming")
 private fun FinanceAppScreen() {
-    var checkSucceeded by rememberSaveable { mutableStateOf(false) }
+    val balance = INITIAL_BALANCE
+    val transactionCount = 0
+    var state by remember { mutableStateOf(MainUiState()) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -66,16 +75,29 @@ private fun FinanceAppScreen() {
         ) {
             Text(
                 text = stringResource(
-                    if (checkSucceeded) {
-                        R.string.check_success_message
-                    } else {
-                        R.string.test_screen_message
-                    },
+                    R.string.balance_summary,
+                    state.balance,
+                    state.counter,
                 ),
                 style = MaterialTheme.typography.headlineSmall,
             )
-            Button(onClick = { checkSucceeded = true }) {
-                Text(text = stringResource(R.string.check_button))
+            Button(onClick = {
+                val transaction = Transaction(
+                    TransactionType.DEPOSIT,
+                    TEST_TRANSACTION_AMOUNT,
+                )
+                state = reduce(state, MainUiEvent.AddTransaction(transaction))
+            }) {
+                Text(text = stringResource(R.string.add_income_button))
+            }
+            Button(onClick = {
+                val transaction = Transaction(
+                    TransactionType.WITHDRAW,
+                    TEST_TRANSACTION_AMOUNT,
+                )
+                state = reduce(state, MainUiEvent.AddTransaction(transaction))
+            }) {
+                Text(text = stringResource(R.string.add_expense_button))
             }
         }
     }
