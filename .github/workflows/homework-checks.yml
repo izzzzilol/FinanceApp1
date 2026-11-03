@@ -3,15 +3,12 @@ name: Homework checks
 on:
   pull_request:
     branches:
-      - lecture-07
+      - master
     types:
       - opened
       - synchronize
       - reopened
       - ready_for_review
-  push:
-    branches: 
-      - lecture-07
   workflow_dispatch:
 
 permissions:
