@@ -4,8 +4,7 @@ import androidx.room.TypeConverter
 
 internal class TransactionTypeConverter {
     @TypeConverter
-    fun fromStoredVALUE(value: String): TransactionType =
-        TransactionType.valueOf(value)
+    fun fromStoredVALUE(value: String): TransactionType = TransactionType.valueOf(value)
 
     @TypeConverter
     fun toStoredValue(type: TransactionType): String = type.name

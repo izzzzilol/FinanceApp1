@@ -10,11 +10,10 @@ import java.util.concurrent.Executors
 private const val DATABASE_LOG_TAG = "TransactionDatabase"
 
 internal class TransactionRepository(context: Context) {
-    private val database = TransactionDatabase.open(context)
+    private val database = TransactionDatabase.create(context)
     private val dao = database.transactionDao()
     private val executor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
-
 
     fun load(onResult: (List<Transaction>?) -> Unit) {
         executor.execute {
