@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.detekt)
-    alias(libs.plugins.ksp)
 }
 
 detekt {
@@ -86,7 +85,6 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
     detektPlugins("dev.detekt:detekt-rules-ktlint-wrapper:${libs.versions.detekt.get()}")
 
     val composeBom = platform(libs.androidx.compose.bom)
@@ -103,7 +101,4 @@ dependencies {
     androidTestImplementation(composeBom)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
 }
-
