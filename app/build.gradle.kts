@@ -105,5 +105,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.navigation.compose)
 }
 
