@@ -13,8 +13,10 @@ activityCompose = "1.13.0"
 lifecycle = "2.10.0"
 detekt = "2.0.0-alpha.6"
 kotlin = "2.4.10"
+navigation = "2.9.8"
 
 [libraries]
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
