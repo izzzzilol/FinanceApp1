@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
+private const val ASYNC_ROUTE = "async"
 private const val TRANSACTIONS_ROUTE = "transactions"
 private const val SETTINGS_ROUTE = "settings"
 
@@ -40,6 +41,7 @@ internal fun FinanceNavigation() {
     val navController = rememberNavController()
 
     val transactionViewModel: TransactionViewModel = viewModel()
+    val asyncViewModel: AsyncTransactionsViewModel = viewModel()
 
     var showBalance by rememberSaveable {
         mutableStateOf(true)
@@ -47,8 +49,19 @@ internal fun FinanceNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = TRANSACTIONS_ROUTE,
+        startDestination = ASYNC_ROUTE,
     ) {
+        composable(ASYNC_ROUTE) {
+            AsyncTransactionsScreen(
+                viewModel = asyncViewModel,
+                onOpenLegacy = {
+                    navController.navigate(TRANSACTIONS_ROUTE) {
+                        launchSingleTop = true
+                    }
+                },
+            )
+        }
+
         composable(TRANSACTIONS_ROUTE) {
             TransactionScreen(
                 viewModel = transactionViewModel,
@@ -56,6 +69,12 @@ internal fun FinanceNavigation() {
                 onOpenSettings = {
                     navController.navigate(SETTINGS_ROUTE) {
                         launchSingleTop = true
+                    }
+                },
+                onOpenAsync = {
+                    navController.navigate(ASYNC_ROUTE) {
+                        launchSingleTop = true
+                        popUpTo(ASYNC_ROUTE)
                     }
                 },
             )

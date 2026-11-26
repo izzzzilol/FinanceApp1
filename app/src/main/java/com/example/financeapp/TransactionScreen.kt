@@ -27,7 +27,12 @@ import androidx.compose.material3.TextButton
 
 @Composable
 @Suppress("FunctionNaming", "LongMethod")
-internal fun TransactionScreen(viewModel: TransactionViewModel, showBalance: Boolean, onOpenSettings: () -> Unit) {
+internal fun TransactionScreen(
+    viewModel: TransactionViewModel,
+    showBalance: Boolean,
+    onOpenSettings: () -> Unit,
+    onOpenAsync: () -> Unit,
+) {
     val state = viewModel.uiState
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
@@ -40,6 +45,9 @@ internal fun TransactionScreen(viewModel: TransactionViewModel, showBalance: Boo
             Text(stringResource(R.string.transaction_title), style = MaterialTheme.typography.headlineMedium)
             TextButton(onClick = onOpenSettings) {
                 Text(stringResource(R.string.settings_title))
+            }
+            TextButton(onClick = onOpenAsync) {
+                Text(stringResource(R.string.async_back))
             }
             if (showBalance) {
                 Text(
