@@ -18,4 +18,8 @@
     <string name="transaction_database_error">
         Не удалось прочитать или сохранить операции
     </string>
+    <string name="transaction_count">Операций: %1$d</string>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_show_balance">Показывать баланс</string>
+    <string name="settings_back">Назад</string>
 </resources>
